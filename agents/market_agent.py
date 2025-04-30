@@ -36,7 +36,7 @@ def create_search_agent() -> Runnable:
 search_agent = create_search_agent()               #체인 저장하여 재사용
         
 #데이터 수집 메인 함수  > 스타트업의 시장성과 경쟁력 정보 수집의 메인 함수    
-def collect(state: AgentState = None) -> str:
+def collect(state: AgentState = None) -> dict:
         startup_name = state['company']
         """스타트업의 시장성 및 경쟁력 정보 수집
         
@@ -61,7 +61,7 @@ def collect(state: AgentState = None) -> str:
             state["market"] = list(state.get("market", [])) + [result_message]
             
         #최종적으로 포맷팅된 분석 결과 문자열을 반환
-        return formatted_result 
+        return {'market': [result_message]} 
     
 #시장 분석 함수 > 웹 검색을 통해 스타트업의 시장 분석 정보를 수집
 def analyze_market(startup_name: str) -> str:
