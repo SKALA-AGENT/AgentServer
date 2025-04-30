@@ -3,6 +3,7 @@ from langchain_core.messages import BaseMessage
 from langgraph.graph.message import add_messages
 
 class AgentState(TypedDict):
+    company: Annotated[BaseMessage, add_messages]
     financial: Annotated[Sequence[BaseMessage], add_messages]
     market: Annotated[Sequence[BaseMessage], add_messages]
     tech: Annotated[Sequence[BaseMessage], add_messages]
