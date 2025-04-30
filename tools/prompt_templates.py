@@ -47,16 +47,50 @@ MARKET_PROMPT = PromptTemplate.from_template("""
 """)
 
 # 투자 보고서 작성 프롬프트
-REPORT_PROMPT = PromptTemplate.from_template("""
-기업명: {company_name}
-재무정보: {finance}
-기술요약: {tech}
-시장성: {market}
-대표자: {ceo}
-투자 판단: {judgement}
+REPORT_PROMPT = PromptTemplate.from_template(
+    input_variables=[
+        "company_name",
+        "founder_score", "founder_weight",
+        "market_score", "market_weight",
+        "product_score", "product_weight",
+        "competition_score", "competition_weight",
+        "marketing_score", "marketing_weight",
+        "funding_score", "funding_weight",
+        "others_score", "others_weight",
+        "total_score", "total_weight",
+        "founder_comment", "market_comment", "product_comment",
+        "competition_comment", "marketing_comment",
+        "funding_comment", "others_comment"
+    ],
+    template="""
+[투자 평가 리포트]
 
-위 정보를 기반으로 정돈된 투자 보고서를 작성해 주세요.
-""") 
+기업명: {company_name}
+
+* 항목별 점수 : (획득 점수)/(항목별 비중)
+    * 창업자 : {founder_score} / {founder_weight}%
+    * 시장성 : {market_score} / {market_weight}%
+    * 제품/기술력 : {product_score} / {product_weight}%
+    * 경쟁 환경 : {competition_score} / {competition_weight}%
+    * 마케팅/영업/파트너 : {marketing_score} / {marketing_weight}%
+    * 추가 자금 조달 필요성 : {funding_score} / {funding_weight}%
+    * 기타 요인 : {others_score} / {others_weight}%
+
+* 총점 : {total_score} 
+
+* 판단 이유 :
+    * 창업자 : {founder_comment}
+    * 시장성 : {market_comment}
+    * 제품/기술력 : {product_comment}
+    * 경쟁 환경 : {competition_comment}
+    * 마케팅/영업/파트너 : {marketing_comment}
+    * 추가 자금 조달 필요성 : {funding_comment}
+    * 기타 요인 : {others_comment}
+
+위 항목을 반드시 고수할 것, 한글로 결과를 출력할 것.
+"""
+)
+
 
 # 투자 판단 프롬프트
 INVESTMENT_PROMPT = PromptTemplate.from_template("""
