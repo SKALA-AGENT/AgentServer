@@ -1,7 +1,7 @@
 # market_agent.py
 import sys
 # 상위 디렉토리를 Python 경로에 추가
-sys.path.append(r'C:\Users\Administrator\Documents\SKALA\AgentServer')
+# sys.path.append(r'C:\Users\Administrator\Documents\SKALA\AgentServer')
 
 from langchain_core.runnables import Runnable
 from langchain_openai import ChatOpenAI

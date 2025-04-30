@@ -1,8 +1,9 @@
 import re
 from langchain_openai import ChatOpenAI
-from prompt_templates import REPORT_PROMPT
+from tools.prompt_templates import REPORT_PROMPT
 from dotenv import load_dotenv
 import os
+from fpdf import FPDF
 
 load_dotenv()
 
@@ -65,7 +66,6 @@ def parse_investment_text(text):
     return result
 
 def write_pdf_report(report_text, file_path: str):
-    from fpdf import FPDF
     pdf = FPDF()
     pdf.add_page()
     pdf.add_font('Nanum', '', 'NanumSquareRoundB.ttf', uni=True)
@@ -74,7 +74,8 @@ def write_pdf_report(report_text, file_path: str):
         pdf.multi_cell(0, 10, line)
     pdf.output(file_path)
 
-def generate_report_from_state(agent_state, out_dir="./reports"):
+def generate_report_from_state(agent_state):
+    out_dir="./reports"
     # 회사명은 company 에이전트에서
     company_name = agent_state["company"][-1].content if agent_state.get("company") else "알수없음"
     # investment 평가 결과는 이전처럼 파싱
@@ -96,7 +97,7 @@ def generate_report_from_state(agent_state, out_dir="./reports"):
     write_pdf_report(report_text, out_path)
     return out_path
 
-if __name__ == "__main__":
-    from agent_state import test_agent_state
-    out_path = generate_report_from_state(test_agent_state)
-    print(f"테스트 보고서가 {out_path}에 생성되었습니다.")
+# if __name__ == "__main__":
+#     from agent_state import test_agent_state
+#     out_path = generate_report_from_state(test_agent_state)
+#     print(f"테스트 보고서가 {out_path}에 생성되었습니다.")
