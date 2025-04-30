@@ -1,7 +1,13 @@
 from langchain.vectorstores import FAISS
 from langchain.embeddings import OpenAIEmbeddings
 from langchain.retrievers import BM25Retriever, EnsembleRetriever
+from langchain_community.document_loaders import PyMuPDFLoader
 from typing import List, Any
+
+file_path = "docs/sample.pdf"
+# PDF 문서 로드
+loader = PyMuPDFLoader(file_path)
+docs = loader.load()
 
 
 def load_hybrid_retriever(vectordb_path: str, docs: List[Any]):
