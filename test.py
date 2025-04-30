@@ -1,6 +1,6 @@
 from tools.hybrid_retriever import load_hybrid_retriever
 from agents.financial_agent import create_financial_agent, create_financial_analyse
-from langchain.schema import AgentState
+from util.agent_state import AgentState
 from tools.load_docs import load_company_pdfs
 
 # 테스트 코드
