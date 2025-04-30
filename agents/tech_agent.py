@@ -8,6 +8,7 @@ from langchain.prompts import PromptTemplate
 from pydantic import BaseModel, Field
 from tools.tech_agent_tools.patent_search import patent_search_tool
 from tools.tech_agent_tools.tech_news_analyzer import tech_news_tool
+from util.agent_state import AgentState
 
 
 # 기술 정보 출력 형식 정의
@@ -135,7 +136,10 @@ def collect_tech_info(company_name: str) -> Dict[str, Any]:
 
 
 # 기술 분석 에이전트 생성
-def create_tech_analysis_agent(company_name: str) -> Runnable:
+def create_tech_analysis_agent(state: AgentState) -> Dict:
+
+    print(state)
+    company_name = state["company"]
 
     parser = StrOutputParser()
 
@@ -160,4 +164,7 @@ def create_tech_analysis_agent(company_name: str) -> Runnable:
         | ChatOpenAI(temperature=0.7)
         | parser
     )
-    return chain
+
+    res = chain.invoke({})
+
+    return {"tech": [res]}
