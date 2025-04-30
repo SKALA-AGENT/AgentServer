@@ -1,2 +1,5 @@
 .env
 /venv-agent
+/ven
+__pycache__/
+venv
