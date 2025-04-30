@@ -9,7 +9,7 @@ from typing import Dict
 from tools.prompt_templates import FINANCE_PROMPT
 from tools.load_docs import load_company_pdfs
 from langchain_teddynote.messages import AgentStreamParser
-
+from langchain.schema import AgentState
 # 스토어 초기화
 store: Dict[str, ChatMessageHistory] = {}
 
@@ -62,3 +62,20 @@ def create_financial_agent(retriever) -> Runnable:
     
     return agent_executor
 
+def create_financial_analyse(agent_executor, state:AgentState):
+    """재무 분석 에이전트 답변 생성"""
+    query = state["company"]
+    # 스트리밍 파서 정의
+    agent_stream_parser = AgentStreamParser()
+    
+    # 스트리밍 응답 처리
+    response = agent_executor.stream(
+        {"input": query}
+    )
+    
+    # 스트림 처리
+    for step in response:
+        agent_stream_parser.process_agent_steps(step)
+
+    # 스트리밍 응답 반환
+    return agent_stream_parser.get_response()
