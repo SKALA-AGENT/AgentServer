@@ -1,9 +1,64 @@
-from langchain_core.runnables import Runnable
+from langchain_core.runnables import Runnable, RunnableWithMessageHistory
 from langchain_openai import ChatOpenAI
 from langchain_core.output_parsers import StrOutputParser
+from langchain.agents import create_tool_calling_agent, AgentExecutor
+from langchain.tools import Tool
+from langchain_community.chat_message_histories import ChatMessageHistory
+from tools.hybrid_retriever import load_hybrid_retriever, load_dense_retriever
+from typing import Dict
 from tools.prompt_templates import FINANCE_PROMPT
+from tools.load_docs import load_company_pdfs
+from langchain_teddynote.messages import AgentStreamParser
 
+# 스토어 초기화
+store: Dict[str, ChatMessageHistory] = {}
 
-# 재무 분석 에이전트 생성
+def create_retriever_tool(retriever, name="financial_search", description="재무 정보 검색 도구"):
+    """리트리버를 도구로 변환하는 함수"""
+    return Tool(
+        name=name,
+        func=lambda q: retriever.get_relevant_documents(q),
+        description=description
+    )
+
+# def get_session_history(session_ids: str) -> ChatMessageHistory:
+#     """세션 기록 관리 함수"""
+#     if session_ids not in store:
+#         store[session_ids] = ChatMessageHistory()
+#     return store[session_ids]
+
 def create_financial_agent(retriever) -> Runnable:
-    return FINANCE_PROMPT | retriever | ChatOpenAI() | StrOutputParser() 
+    """재무 분석 에이전트 생성"""
+    # 리트리버를 도구로 변환
+    retriever_tool = create_retriever_tool(
+        retriever,
+        name="financial_search",
+        description="기업 재무 정보를 검색하는 도구입니다. 재무제표, 재무비율, 현금흐름 등의 정보를 검색할 수 있습니다."
+    )
+    
+    # 도구 목록 정의
+    tools = [retriever_tool]
+    
+    # LLM 정의
+    llm = ChatOpenAI(model="gpt-4", temperature=0)
+    
+    # 에이전트 생성
+    agent = create_tool_calling_agent(llm, tools, FINANCE_PROMPT)
+    
+    # AgentExecutor 생성
+    agent_executor = AgentExecutor(
+        agent=agent,
+        tools=tools,
+        verbose=True
+    )
+    
+    # 채팅 기록이 포함된 에이전트 생성
+    # agent_with_chat_history = RunnableWithMessageHistory(
+    #     agent_executor,
+    #     get_session_history,
+    #     input_messages_key="input",
+    #     history_messages_key="chat_history"
+    # )
+    
+    return agent_executor
+

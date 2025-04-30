@@ -1,14 +1,18 @@
-from langchain.prompts import PromptTemplate
+from langchain.prompts import PromptTemplate, ChatPromptTemplate
 
 
 # 재무 분석 프롬프트
-FINANCE_PROMPT = PromptTemplate.from_template("""
-다음 재무 정보를 분석하여 투자 판단에 도움이 되는 인사이트를 제공해주세요:
-
-{context}
-
-질문: {question}
-""")
+FINANCE_PROMPT = ChatPromptTemplate.from_messages([
+    (
+            "system",
+            "당신은 기업 재무 분석 전문가입니다. "
+            "financial_search 도구를 사용하여 기업의 재무 정보를 검색하고, "
+            "전문적인 관점에서 분석 결과를 제공해주세요."
+    ),
+    ("placeholder", "{chat_history}"),
+    ("human", "{input}"),
+    ("placeholder", "{agent_scratchpad}")
+    ])
 
 
 # 기술 분석 프롬프트
