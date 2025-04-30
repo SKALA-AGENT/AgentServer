@@ -3,6 +3,25 @@ from langchain_openai import ChatOpenAI
 from langchain.utilities import WikipediaAPIWrapper
 from langchain.tools.tavily_search import TavilySearchResults
 from tools.prompt_templates import CEO_AGENT_PROMPT
+from tools.hybrid_retriever import load_hybrid_retriever
+
+def extract_company_info(company_name: str, retriever) -> dict:
+    """벡터 DB에서 기업 정보 조회"""
+    try:
+        # 기업명으로 관련 문서 검색
+        docs = retriever.get_relevant_documents(company_name)
+        if not docs:
+            return {}
+            
+        # 첫 번째 문서에서 CEO 정보 추출
+        metadata = docs[0].metadata
+        return {
+            "company_name": company_name,
+            "ceo_name": metadata.get("ceo_name", "")
+        }
+    except Exception as e:
+        print(f"기업 정보 조회 실패")
+        return {}
 
 def build_search_query(ceo_name: str, company_name: str) -> str:
     """검색 쿼리 생성"""
@@ -33,12 +52,21 @@ def run_ceo_agent(state):
     """워크플로우에서 호출되는 CEO 분석 에이전트"""
     
     # 기업 정보 추출
-    company_info = state.get("company_info", {})
-    company_name = company_info.get("company_name", "")
-    ceo_name = company_info.get("ceo_name", "")
     
-    if not company_name or not ceo_name:
-        return {"ceo": "기업 정보가 제공되지 않았습니다."}
+    company_name = state.get("company", "")
+    if not company_name:
+        return {"기업명 가져오지 못함"}
+    retriever = state.get("retriever")
+    if not retriever:
+        return {"검색 시스템이 초기화되지 않았습니다."}
+        
+    company_info = extract_company_info(company_name, retriever)
+    if not company_info:
+        return {"벡터 DB에서 기업 정보를 찾을 수 없습니다."}
+        
+    ceo_name = company_info.get("ceo_name")
+    if not ceo_name:
+        return {"CEO 정보를 찾을 수 없습니다."}
     
     # LLM & 툴 초기화
     llm = ChatOpenAI(temperature=0.2, model="gpt-4")
