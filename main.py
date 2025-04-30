@@ -3,6 +3,7 @@ from langchain_teddynote.messages import stream_graph, random_uuid
 from langchain_core.runnables import RunnableConfig
 from contextlib import asynccontextmanager
 from workflows.agentic_rag_graph import create_workflow
+from langchain_core.messages import HumanMessage
 
 graph = create_workflow("./data/vectordb/financial_bge_ko")
 
@@ -29,9 +30,7 @@ async def read_root():
 async def post_agent(agent: str):
     config = RunnableConfig(recursion_limit=20, configurable={"thread_id": random_uuid()})
     inputs = {
-        "company": [
-        ("user", agent),
-        ]
+        "company": [HumanMessage(content=agent)]
     }
     res = graph.stream(inputs, config, stream_mode="messages")
     # stream_graph(graph, inputs, config, ['financial', 'tech', 'market', 'ceo', 'investment','report'])

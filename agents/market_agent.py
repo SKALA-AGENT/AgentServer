@@ -12,14 +12,12 @@ from datetime import datetime
 from dotenv import load_dotenv  
 from util.agent_state import AgentState 
 from langchain_core.messages import HumanMessage, AIMessage
-from langchain_teddynote.models import get_model_name, LLMs
 
 
 load_dotenv()  #환경 변수 로드
 
 AGENT_NAME = "시장성/경쟁력 수집"
-MODEL_NAME = get_model_name(LLMs.GPT4)
-
+MODEL_NAME = "gpt-4o-mini"
 #검색 에이전트 생성 함수 > 웹 겁색을 수행하고 결과를 분석하는 LangChain 체인을 생성
 def create_search_agent() -> Runnable:
         """웹 검색 기반 시장 분석 에이전트 생성"""

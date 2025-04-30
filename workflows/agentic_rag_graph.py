@@ -34,13 +34,13 @@ def create_workflow(vectordb_path: str):
     workflow = StateGraph(AgentState)
     
     # Add nodes for parallel execution
-    workflow.add_node("financial", create_financial_agent)
-    workflow.add_node("tech", create_tech_analysis_agent)
-    workflow.add_node("market", collect)
+    workflow.add_node("financial_", create_financial_agent)
+    workflow.add_node("tech_", create_tech_analysis_agent)
+    workflow.add_node("market_", collect)
     # workflow.add_node("collect_results", process_agent_results)
-    workflow.add_node("ceo", run_ceo_agent)
-    workflow.add_node("investment", create_investment_agent)
-    workflow.add_node("report", generate_report_from_state)
+    workflow.add_node("ceo_", run_ceo_agent)
+    workflow.add_node("investment_", create_investment_agent)
+    workflow.add_node("report_", generate_report_from_state)
     # workflow.add_node("collect_results", process_agent_results)
 
     # # Define parallel execution flow
@@ -48,12 +48,12 @@ def create_workflow(vectordb_path: str):
     # workflow.set_entry_point("ceo")
 
     # Parallel agent execution
-    workflow.add_edge(START, "financial")
-    workflow.add_edge("financial", "tech")
-    workflow.add_edge("tech", "market")
-    workflow.add_edge("market", "ceo")
-    workflow.add_edge("ceo", "investment")
-    workflow.add_edge("investment", "report")
-    workflow.add_edge("report", END)
+    workflow.add_edge(START, "financial_")
+    workflow.add_edge("financial_", "tech_")
+    workflow.add_edge("tech_", "market_")
+    workflow.add_edge("market_", "ceo_")
+    workflow.add_edge("ceo_", "investment_")
+    workflow.add_edge("investment_", "report_")
+    workflow.add_edge("report_", END)
 
     return workflow.compile() 

@@ -56,7 +56,7 @@ MARKET_PROMPT = PromptTemplate.from_template("""
 """)
 
 # 투자 보고서 작성 프롬프트
-REPORT_PROMPT = PromptTemplate.from_template(
+REPORT_PROMPT = PromptTemplate(
     input_variables=[
         "company_name",
         "founder_score", "founder_weight",
