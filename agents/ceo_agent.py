@@ -57,10 +57,10 @@ def run_ceo_agent(state):
         
         # 결과 결합
         combined = f"""
-📚 Wikipedia 결과:
+Wikipedia 결과:
 {wiki_result}
 
-🌐 Tavily 결과:
+Tavily 결과:
 {tavily_result}
 """
         
@@ -74,4 +74,4 @@ def run_ceo_agent(state):
         return {"ceo": result}
         
     except Exception as e:
-        return {"ceo": f"CEO 정보 수집 실패: {str(e)}"}
+        return {"ceo": f"CEO 정보 수집 실패"}
